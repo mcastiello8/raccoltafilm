@@ -5,8 +5,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import it.prova.raccoltafilm.dao.RegistaDAO;
+import it.prova.raccoltafilm.exceptions.ElementNotFoundException;
 import it.prova.raccoltafilm.model.Regista;
 import it.prova.raccoltafilm.web.listener.LocalEntityManagerFactoryListener;
+
 
 public class RegistaServiceImpl implements RegistaService {
 
@@ -65,9 +67,28 @@ public class RegistaServiceImpl implements RegistaService {
 
 	@Override
 	public void aggiorna(Regista registaInstance) throws Exception {
-		// TODO Auto-generated method stub
+		// questo è come una connection
+				EntityManager entityManager = LocalEntityManagerFactoryListener.getEntityManager();
 
-	}
+				try {
+					// questo è come il MyConnection.getConnection()
+					entityManager.getTransaction().begin();
+
+					// uso l'injection per il dao
+					registaDAO.setEntityManager(entityManager);
+
+					// eseguo quello che realmente devo fare
+					registaDAO.update(registaInstance);
+
+					entityManager.getTransaction().commit();
+				} catch (Exception e) {
+					entityManager.getTransaction().rollback();
+					e.printStackTrace();
+					throw e;
+				} finally {
+					LocalEntityManagerFactoryListener.closeEntityManager(entityManager);
+				}
+			}
 
 	@Override
 	public void inserisciNuovo(Regista registaInstance) throws Exception {
@@ -96,10 +117,27 @@ public class RegistaServiceImpl implements RegistaService {
 
 	@Override
 	public void rimuovi(Long idRegista) throws Exception {
-		// TODO Auto-generated method stub
+		EntityManager entityManager = LocalEntityManagerFactoryListener.getEntityManager();
+
+		try {
+			entityManager.getTransaction().begin();
+
+			registaDAO.setEntityManager(entityManager);
+			Regista registaToRemove = registaDAO.findOne(idRegista).orElse(null);
+			if (registaToRemove == null)
+				throw new ElementNotFoundException("Regista con id: " + idRegista + " non trovato.");
+
+			registaDAO.delete(registaToRemove);
+			entityManager.getTransaction().commit();
+		} catch (Exception e) {
+			entityManager.getTransaction().rollback();
+			e.printStackTrace();
+			throw e;
+		} finally {
+			LocalEntityManagerFactoryListener.closeEntityManager(entityManager);
+		}
 
 	}
-
 	@Override
 	public List<Regista> findByExample(Regista example) throws Exception {
 		// questo è come una connection

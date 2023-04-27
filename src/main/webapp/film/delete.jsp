@@ -6,7 +6,7 @@
 	 	<!-- Common imports in pages -->
 	 	<jsp:include page="../header.jsp" />
 	 	
-	   <title>Rimuovi Elemento</title>
+	   <title>Rimuovi Film</title>
 	   
 	 </head>
 	   <body class="d-flex flex-column h-100">
@@ -21,7 +21,7 @@
 			  
 			  		<div class='card'>
 					    <div class='card-header'>
-					        <h5>Visualizza dettaglio</h5>
+					        <h5>Rimuovi film</h5>
 					    </div>
 					    
 					
