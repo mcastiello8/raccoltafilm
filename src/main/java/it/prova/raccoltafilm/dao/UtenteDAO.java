@@ -14,4 +14,10 @@ public interface UtenteDAO extends IBaseDAO<Utente> {
 
 	public Optional<Utente> login(String username, String password) throws Exception;
 
+	Utente findOneEager(Long id) throws Exception;
+
+	List<Utente> findByExample(Utente example) throws Exception;
+	
+	
+
 }
